@@ -13,33 +13,18 @@ neoForge {
         minecraftVersion = project.parchment_minecraft_version
     }
 
-    // accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
-
     runs {
         client {
             client()
             gameDirectory = project.file('run/client')
-            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
-        }
-
-        server {
-            server()
-            programArgument '--nogui'
-            gameDirectory = project.file('run/server')
-            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
-        }
-
-        gameTestServer {
-            type = 'gameTestServer'
-            gameDirectory = project.file('run/test_server')
-            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.project_id
         }
 
         data {
             clientData()
 
             gameDirectory = project.file('run/data')
-            programArguments.addAll '--mod', rootProject.project_id,
+            programArguments.addAll '--mod', project.project_id,
                     '--all',
                     '--output', file('src/generated/resources/').getAbsolutePath(),
                     '--existing', file('src/main/resources/').getAbsolutePath()

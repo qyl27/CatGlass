@@ -1,0 +1,8 @@
+{
+  "text.catglassc.cookie_n": "%1$s: %2$s",
+  "text.catglassc.cookie_set": "Cookie %1$s was set to %2$s: %3$s",
+  "text.catglassc.cookie_unset": "Cookie %1$s was unset",
+  "text.catglassc.cookie_value": "Cookie %1$s(%2$s): %3$s",
+  "text.catglassc.key_not_found": "Key %1$s not found",
+  "text.catglassc.total_n_cookies": "Total %1$s cookies"
+}
