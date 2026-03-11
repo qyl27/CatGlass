@@ -64,7 +64,7 @@ Key同上，如果对应的Cookie不存在不会报告错误。
 
 在配置文件中，它是一个列表，每一行使用形如`examplemod:cookie_key:cafebabe`的格式表示一个预设Cookie，它使用冒号进行分割，其中第二个冒号前的字符串是Key（`examplemod:cookie_key`），后面是十六进制字符串编码的Payload（`cafebabe`）。
 
-在客户端尝试登入服务器的握手过程中，如果是首次登入（即并非通过transfer命令切换服务器），会把预设Cookie列表的内容覆盖到客户端的serverCookie中。
+在客户端尝试登入服务器的握手过程中，如果是首次登入（即并非通过transfer命令切换服务器），会把预设Cookie列表的内容覆盖到客户端的serverCookie中。但是，添加预设不会阻止服务器覆盖它们，可以结合忽略列表功能实现此需求。
 
 命令的形式和Cookies一节中基本相同。
 

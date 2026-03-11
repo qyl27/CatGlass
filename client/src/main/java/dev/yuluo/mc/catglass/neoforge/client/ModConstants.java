@@ -28,5 +28,8 @@ public class ModConstants {
         public static final String PRESET_SET = "text.catglassc.preset_set";
         public static final String PRESET_UNSET = "text.catglassc.preset_unset";
         public static final String PRESET_CLEARED = "text.catglassc.preset_cleared";
+
+        public static final String CONFIG_IGNORED_KEYS = "text.catglassc.config.ignored_keys";
+        public static final String CONFIG_PRESET_COOKIES = "text.catglassc.config.preset_cookies";
     }
 }

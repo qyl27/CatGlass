@@ -16,10 +16,12 @@ public class Config {
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> FIELD_IGNORED_KEYS = BUILDER
             .comment("Ignored keys list")
+            .translation(ModConstants.Translation.CONFIG_IGNORED_KEYS)
             .defineList("ignoredKeys", List.of(), () -> "", Config::validateIdentifier);
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> FIELD_PRESET_COOKIES = BUILDER
             .comment("Preset cookies list")
+            .translation(ModConstants.Translation.CONFIG_PRESET_COOKIES)
             .defineList("presetCookies", List.of(), () -> "", Config::validatePreset);
 
     static final ModConfigSpec SPEC = BUILDER.build();

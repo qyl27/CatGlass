@@ -35,5 +35,8 @@ public class EnUsLangProvider extends LanguageProvider {
         add(ModConstants.Translation.PRESET_SET, "Preset %1$s was set to %3$s (%2$s)");
         add(ModConstants.Translation.PRESET_UNSET, "Preset %1$s was unset");
         add(ModConstants.Translation.PRESET_CLEARED, "Presets cleared");
+
+        add(ModConstants.Translation.CONFIG_IGNORED_KEYS, "Ignored keys");
+        add(ModConstants.Translation.CONFIG_PRESET_COOKIES, "Preset cookies");
     }
 }
