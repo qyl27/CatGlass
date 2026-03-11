@@ -1,6 +1,7 @@
 package dev.yuluo.mc.catglass.neoforge.client.mixin;
 
 import dev.yuluo.mc.catglass.neoforge.client.CatGlassClient;
+import dev.yuluo.mc.catglass.neoforge.client.Config;
 import dev.yuluo.mc.catglass.neoforge.client.SerializationFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
@@ -35,7 +36,7 @@ public abstract class ClientCommonPacketListenerImplMixin {
         var key = packet.key();
         var value = SerializationFormat.BASE64.deserialize(packet.payload());
 
-        if (IgnoredCookieHelper.isIgnored(key)) {
+        if (Config.checkIgnored(key)) {
             CatGlassClient.LOGGER.info("Ignored server put cookie: key={}, payload={}", key, value);
             ci.cancel();
         } else {
