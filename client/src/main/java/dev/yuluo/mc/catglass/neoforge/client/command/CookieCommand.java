@@ -1,18 +1,17 @@
-package dev.yuluo.mc.catglass.neoforge.client;
+package dev.yuluo.mc.catglass.neoforge.client.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import dev.yuluo.mc.catglass.neoforge.client.ClientCookieHelper;
+import dev.yuluo.mc.catglass.neoforge.client.ModConstants;
+import dev.yuluo.mc.catglass.neoforge.client.SerializationFormat;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.network.chat.Component;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
 import java.util.concurrent.CompletableFuture;
@@ -20,37 +19,30 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
-@EventBusSubscriber(modid = CatGlassClient.MODID)
-public class ModCommand {
-    @SubscribeEvent
-    public static void onRegisterCommand(RegisterClientCommandsEvent event) {
-        event.getDispatcher().register(ROOT);
-    }
-
+public class CookieCommand {
     private static final String KEY = "key";
     private static final String FORMAT = "format";
     private static final String VALUE = "value";
 
-    public static final LiteralArgumentBuilder<CommandSourceStack> ROOT = literal("catglassc")
-            .then(literal("cookies")
-                    .then(literal("list")
-                            .executes(ModCommand::onListCookies))
-                    .then(literal("get")
-                            .then(argument(KEY, IdentifierArgument.id())
-                                    .suggests(ModCommand::onSuggestKey)
-                                    .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
-                                            .executes(ModCommand::onGetCookie))))
-                    .then(literal("set")
-                            .then(argument(KEY, IdentifierArgument.id())
-                                    .suggests(ModCommand::onSuggestKey)
-                                    .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
-                                            .then(argument(VALUE, StringArgumentType.greedyString())
-                                                    .executes(ModCommand::onSetCookie))
-                                    )))
-                    .then(literal("unset")
-                            .then(argument(KEY, IdentifierArgument.id())
-                                    .suggests(ModCommand::onSuggestKey)
-                                    .executes(ModCommand::onUnsetCookie))));
+    public static final LiteralArgumentBuilder<CommandSourceStack> COOKIES = literal("cookies")
+            .then(literal("list")
+                    .executes(CookieCommand::onList))
+            .then(literal("get")
+                    .then(argument(KEY, IdentifierArgument.id())
+                            .suggests(CookieCommand::onSuggestKey)
+                            .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
+                                    .executes(CookieCommand::onGet))))
+            .then(literal("set")
+                    .then(argument(KEY, IdentifierArgument.id())
+                            .suggests(CookieCommand::onSuggestKey)
+                            .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
+                                    .then(argument(VALUE, StringArgumentType.greedyString())
+                                            .executes(CookieCommand::onSet))
+                            )))
+            .then(literal("unset")
+                    .then(argument(KEY, IdentifierArgument.id())
+                            .suggests(CookieCommand::onSuggestKey)
+                            .executes(CookieCommand::onUnset)));
 
     private static CompletableFuture<Suggestions> onSuggestKey(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         var result = ClientCookieHelper.listCookies();
@@ -60,7 +52,7 @@ public class ModCommand {
         return builder.buildFuture();
     }
 
-    private static int onListCookies(CommandContext<CommandSourceStack> context) {
+    private static int onList(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var result = ClientCookieHelper.listCookies();
         source.sendSuccess(() -> Component.translatable(ModConstants.Translation.TOTAL_N_COOKIES, result.size()), true);
@@ -70,7 +62,7 @@ public class ModCommand {
         return result.size();
     }
 
-    private static int onGetCookie(CommandContext<CommandSourceStack> context) {
+    private static int onGet(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
         var format = context.getArgument(FORMAT, SerializationFormat.class);
@@ -84,7 +76,7 @@ public class ModCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int onSetCookie(CommandContext<CommandSourceStack> context) {
+    private static int onSet(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
         var format = context.getArgument(FORMAT, SerializationFormat.class);
@@ -100,7 +92,7 @@ public class ModCommand {
         }
     }
 
-    private static int onUnsetCookie(CommandContext<CommandSourceStack> context) {
+    private static int onUnset(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
         ClientCookieHelper.unsetCookie(key);

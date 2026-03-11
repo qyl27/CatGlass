@@ -2,6 +2,7 @@ package dev.yuluo.mc.catglass.neoforge.client.mixin;
 
 import dev.yuluo.mc.catglass.neoforge.client.CatGlassClient;
 import dev.yuluo.mc.catglass.neoforge.client.SerializationFormat;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.network.protocol.common.ClientboundStoreCookiePacket;
 import net.minecraft.network.protocol.cookie.ClientboundCookieRequestPacket;
@@ -21,19 +22,39 @@ public abstract class ClientCommonPacketListenerImplMixin {
     @Final
     public Map<Identifier, byte[]> serverCookies;
 
-    @Inject(method = "handleStoreCookie", at = @At("TAIL"))
-    public void catglassc$after$handleStoreCookie(ClientboundStoreCookiePacket packet, CallbackInfo ci) {
-        CatGlassClient.LOGGER.info("Received cookie: key={}, payload={}", packet.key(), SerializationFormat.BASE64.deserialize(packet.payload()));
+    @Shadow
+    @Final
+    protected Minecraft minecraft;
+
+    @Inject(method = "handleStoreCookie", at = @At("HEAD"), cancellable = true)
+    public void catglassc$before$handleStoreCookie(ClientboundStoreCookiePacket packet, CallbackInfo ci) {
+        if (!minecraft.packetProcessor().isSameThread()) {
+            return;
+        }
+
+        var key = packet.key();
+        var value = SerializationFormat.BASE64.deserialize(packet.payload());
+
+        if (IgnoredCookieHelper.isIgnored(key)) {
+            CatGlassClient.LOGGER.info("Ignored server put cookie: key={}, payload={}", key, value);
+            ci.cancel();
+        } else {
+            CatGlassClient.LOGGER.info("Server put cookie: key={}, payload={}", key, value);
+        }
     }
 
-    @Inject(method = "handleRequestCookie", at = @At("TAIL"))
-    public void catglassc$after$handleRequestCookie(ClientboundCookieRequestPacket packet, CallbackInfo ci) {
+    @Inject(method = "handleRequestCookie", at = @At("HEAD"))
+    public void catglassc$before$handleRequestCookie(ClientboundCookieRequestPacket packet, CallbackInfo ci) {
+        if (!minecraft.packetProcessor().isSameThread()) {
+            return;
+        }
+
         var key = packet.key();
         var value = serverCookies.get(key);
         if (value == null) {
-            CatGlassClient.LOGGER.info("Received cookie request: key={}, not found in client", packet.key());
+            CatGlassClient.LOGGER.info("Server request cookie: key={}, not found in client", packet.key());
         } else {
-            CatGlassClient.LOGGER.info("Received cookie request: key={}, value={}", packet.key(), SerializationFormat.BASE64.deserialize(value));
+            CatGlassClient.LOGGER.info("Server request cookie: key={}, value={}", packet.key(), SerializationFormat.BASE64.deserialize(value));
         }
     }
 }

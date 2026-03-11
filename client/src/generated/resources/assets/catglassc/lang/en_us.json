@@ -3,7 +3,14 @@
   "text.catglassc.cookie_set": "Cookie %1$s was set to %3$s (%2$s)",
   "text.catglassc.cookie_unset": "Cookie %1$s was unset",
   "text.catglassc.cookie_value": "Cookie %1$s (%2$s): %3$s",
+  "text.catglassc.ignored": "Key %1$s was ignored",
+  "text.catglassc.ignored_added": "Added %1$s to ignored keys",
+  "text.catglassc.ignored_clear": "Ignored keys cleared",
+  "text.catglassc.ignored_n": "%1$s: %2$s",
+  "text.catglassc.ignored_removed": "Removed %1$s from ignored keys",
   "text.catglassc.key_not_found": "Key %1$s not found",
+  "text.catglassc.not_ignored": "Key %1$s was NOT ignored",
   "text.catglassc.total_n_cookies": "Total %1$s cookies",
+  "text.catglassc.total_n_ignored": "Total ignored %1$s cookie keys",
   "text.catglassc.value_format_invalid": "Value %2$s is invalid for format %1$s"
 }

@@ -18,6 +18,7 @@ neoForge {
             client()
             gameDirectory = project.file('run/client')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.project_id
+            systemProperty 'mixin.debug', 'true'
         }
 
         data {
