@@ -18,6 +18,7 @@ public class EnUsLangProvider extends LanguageProvider {
         add(ModConstants.Translation.COOKIE_SET, "Cookie %1$s was set to %3$s (%2$s)");
         add(ModConstants.Translation.VALUE_FORMAT_INVALID, "Value %2$s is invalid for format %1$s");
         add(ModConstants.Translation.COOKIE_UNSET, "Cookie %1$s was unset");
+        add(ModConstants.Translation.COOKIE_CLEARED, "Cookie cleared");
 
         add(ModConstants.Translation.TOTAL_N_IGNORED, "Total ignored %1$s cookie keys");
         add(ModConstants.Translation.IGNORED_N, "%1$s: %2$s");
@@ -25,6 +26,14 @@ public class EnUsLangProvider extends LanguageProvider {
         add(ModConstants.Translation.NOT_IGNORED, "Key %1$s was NOT ignored");
         add(ModConstants.Translation.IGNORED_ADDED, "Added %1$s to ignored keys");
         add(ModConstants.Translation.IGNORED_REMOVED, "Removed %1$s from ignored keys");
-        add(ModConstants.Translation.IGNORED_CLEAR, "Ignored keys cleared");
+        add(ModConstants.Translation.IGNORED_CLEARED, "Ignored keys cleared");
+
+        add(ModConstants.Translation.TOTAL_N_PRESETS, "Total %1$s presets");
+        add(ModConstants.Translation.PRESET_N, "%1$s: %2$s");
+        add(ModConstants.Translation.PRESET_KEY_NOT_FOUND, "Preset key %1$s not found");
+        add(ModConstants.Translation.PRESET_VALUE, "Preset %1$s (%2$s): %3$s");
+        add(ModConstants.Translation.PRESET_SET, "Preset %1$s was set to %3$s (%2$s)");
+        add(ModConstants.Translation.PRESET_UNSET, "Preset %1$s was unset");
+        add(ModConstants.Translation.PRESET_CLEARED, "Presets cleared");
     }
 }

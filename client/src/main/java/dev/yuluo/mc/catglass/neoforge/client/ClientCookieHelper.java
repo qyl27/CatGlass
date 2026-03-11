@@ -38,4 +38,8 @@ public class ClientCookieHelper {
     public static void unsetCookie(Identifier key) {
         getCookies().remove(key);
     }
+
+    public static void clearCookies() {
+        getCookies().clear();
+    }
 }

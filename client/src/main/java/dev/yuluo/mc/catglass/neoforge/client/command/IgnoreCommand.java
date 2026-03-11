@@ -82,7 +82,7 @@ public class IgnoreCommand {
 
     private static int onClear(CommandContext<CommandSourceStack> context) {
         Config.clearIgnored();
-        context.getSource().sendSuccess(() -> Component.translatable(ModConstants.Translation.IGNORED_CLEAR), true);
+        context.getSource().sendSuccess(() -> Component.translatable(ModConstants.Translation.IGNORED_CLEARED), true);
         return Command.SINGLE_SUCCESS;
     }
 }

@@ -18,6 +18,7 @@ public class ModCommand {
 
     public static final LiteralArgumentBuilder<CommandSourceStack> ROOT = literal("catglassc")
             .then(CookieCommand.COOKIES)
-            .then(IgnoreCommand.IGNORE);
+            .then(IgnoreCommand.IGNORE)
+            .then(PresetCommand.PRESETS);
 
 }

@@ -34,7 +34,7 @@ public abstract class ClientCommonPacketListenerImplMixin {
         }
 
         var key = packet.key();
-        var value = SerializationFormat.BASE64.deserialize(packet.payload());
+        var value = SerializationFormat.HEX_STRING.deserialize(packet.payload());
 
         if (Config.checkIgnored(key)) {
             CatGlassClient.LOGGER.info("Ignored server put cookie: key={}, payload={}", key, value);
@@ -55,7 +55,7 @@ public abstract class ClientCommonPacketListenerImplMixin {
         if (value == null) {
             CatGlassClient.LOGGER.info("Server request cookie: key={}, not found in client", packet.key());
         } else {
-            CatGlassClient.LOGGER.info("Server request cookie: key={}, value={}", packet.key(), SerializationFormat.BASE64.deserialize(value));
+            CatGlassClient.LOGGER.info("Server request cookie: key={}, value={}", packet.key(), SerializationFormat.HEX_STRING.deserialize(value));
         }
     }
 }

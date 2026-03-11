@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import dev.yuluo.mc.catglass.neoforge.client.ClientCookieHelper;
+import dev.yuluo.mc.catglass.neoforge.client.Config;
 import dev.yuluo.mc.catglass.neoforge.client.ModConstants;
 import dev.yuluo.mc.catglass.neoforge.client.SerializationFormat;
 import net.minecraft.commands.CommandSourceStack;
@@ -19,35 +19,35 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
-public class CookieCommand {
+public class PresetCommand {
     private static final String KEY = "key";
     private static final String FORMAT = "format";
     private static final String VALUE = "value";
 
-    public static final LiteralArgumentBuilder<CommandSourceStack> COOKIES = literal("cookies")
+    public static final LiteralArgumentBuilder<CommandSourceStack> PRESETS = literal("presets")
             .then(literal("list")
-                    .executes(CookieCommand::onList))
+                    .executes(PresetCommand::onList))
             .then(literal("get")
                     .then(argument(KEY, IdentifierArgument.id())
-                            .suggests(CookieCommand::onSuggestKey)
+                            .suggests(PresetCommand::onSuggestKey)
                             .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
-                                    .executes(CookieCommand::onGet))))
+                                    .executes(PresetCommand::onGet))))
             .then(literal("set")
                     .then(argument(KEY, IdentifierArgument.id())
-                            .suggests(CookieCommand::onSuggestKey)
+                            .suggests(PresetCommand::onSuggestKey)
                             .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
                                     .then(argument(VALUE, StringArgumentType.greedyString())
-                                            .executes(CookieCommand::onSet))
+                                            .executes(PresetCommand::onSet))
                             )))
             .then(literal("unset")
                     .then(argument(KEY, IdentifierArgument.id())
-                            .suggests(CookieCommand::onSuggestKey)
-                            .executes(CookieCommand::onUnset)))
+                            .suggests(PresetCommand::onSuggestKey)
+                            .executes(PresetCommand::onUnset)))
             .then(literal("clear")
-                    .executes(CookieCommand::onClear));
+                    .executes(PresetCommand::onClear));
 
     private static CompletableFuture<Suggestions> onSuggestKey(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        var result = ClientCookieHelper.listCookies();
+        var result = Config.listPresets();
         for (var cookie : result) {
             builder.suggest(cookie.toString());
         }
@@ -56,10 +56,10 @@ public class CookieCommand {
 
     private static int onList(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
-        var result = ClientCookieHelper.listCookies();
-        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.TOTAL_N_COOKIES, result.size()), true);
+        var result = Config.listPresets();
+        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.TOTAL_N_PRESETS, result.size()), true);
         for (var i = 0; i < result.size(); i++) {
-            source.sendSystemMessage(Component.translatable(ModConstants.Translation.COOKIE_N, i + 1, result.get(i).toString()));
+            source.sendSystemMessage(Component.translatable(ModConstants.Translation.PRESET_N, i + 1, result.get(i).toString()));
         }
         return result.size();
     }
@@ -68,13 +68,13 @@ public class CookieCommand {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
         var format = context.getArgument(FORMAT, SerializationFormat.class);
-        var result = ClientCookieHelper.getCookie(key);
+        var result = Config.getPreset(key);
         if (result == null) {
-            source.sendFailure(Component.translatable(ModConstants.Translation.KEY_NOT_FOUND, key.toString()));
+            source.sendFailure(Component.translatable(ModConstants.Translation.PRESET_KEY_NOT_FOUND, key.toString()));
             return 0;
         }
         var formatted = format.deserialize(result);
-        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_VALUE, key.toString(), format.toString(), formatted), true);
+        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.PRESET_VALUE, key.toString(), format.toString(), formatted), true);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -85,8 +85,8 @@ public class CookieCommand {
         var value = StringArgumentType.getString(context, VALUE);
         try {
             var formatted = format.serialize(value);
-            ClientCookieHelper.setCookie(key, formatted);
-            source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_SET, key.toString(), format.toString(), value), true);
+            Config.setPreset(key, formatted);
+            source.sendSuccess(() -> Component.translatable(ModConstants.Translation.PRESET_SET, key.toString(), format.toString(), value), true);
             return Command.SINGLE_SUCCESS;
         } catch (IllegalArgumentException ex) {
             source.sendFailure(Component.translatable(ModConstants.Translation.VALUE_FORMAT_INVALID, format.toString(), value));
@@ -97,15 +97,14 @@ public class CookieCommand {
     private static int onUnset(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
-        ClientCookieHelper.unsetCookie(key);
-        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_UNSET, key.toString()), true);
+        Config.unsetPreset(key);
+        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.PRESET_UNSET, key.toString()), true);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int onClear(CommandContext<CommandSourceStack> context) {
-        var source = context.getSource();
-        ClientCookieHelper.clearCookies();
-        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_CLEARED), true);
+        Config.clearPreset();
+        context.getSource().sendSuccess(() -> Component.translatable(ModConstants.Translation.PRESET_CLEARED), true);
         return Command.SINGLE_SUCCESS;
     }
 }
