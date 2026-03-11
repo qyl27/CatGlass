@@ -1,0 +1,97 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = project.neoforge_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    // accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            client()
+            gameDirectory = project.file('run/client')
+            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            gameDirectory = project.file('run/server')
+            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
+        }
+
+        gameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file('run/test_server')
+            systemProperty 'neoforge.enabledGameTestNamespaces', rootProject.project_id
+        }
+
+        data {
+            clientData()
+
+            gameDirectory = project.file('run/data')
+            programArguments.addAll '--mod', rootProject.project_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+//            systemProperty 'forge.logging.markers', 'REGISTRIES'
+//            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version            : minecraft_version,
+            minecraft_version_range      : minecraft_version_range,
+            neoforge_version             : neoforge_version,
+            neoforge_version_range       : neoforge_version_range,
+            neoforge_loader_version_range: neoforge_loader_version_range,
+            mod_id                       : project_id,
+            mod_name                     : project_name,
+            mod_version                  : project_version,
+            mod_license                  : mod_license,
+            mod_authors                  : mod_authors,
+            mod_description              : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId = "${rootProject.project_base_name}-${project.name}"
+            from components.java
+        }
+    }
+}

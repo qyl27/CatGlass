@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'xyz.jpenilla.run-velocity'
+}
+
+dependencies {
+    compileOnly group: 'com.velocitypowered', name: 'velocity-api', version: project.velocity_version
+    annotationProcessor group: 'com.velocitypowered', name: 'velocity-api', version: project.velocity_version
+}
+
+tasks {
+  runVelocity {
+    velocityVersion project.velocity_version
+  }
+}
+
+def templateSource = file('src/main/templates')
+def templateDest = layout.buildDirectory.dir('generated/sources/templates')
+def generateTemplates = tasks.register('generateTemplates', Copy) { task ->
+    def props = [
+            'version': project.version
+    ]
+    task.inputs.properties props
+
+    task.from templateSource
+    task.into templateDest
+    task.expand props
+}
+
+sourceSets.main.java.srcDir(generateTemplates.map { it.outputs })
+
+//rootProject.idea.project.settings.taskTriggers.afterSync generateTemplates
+//rootProject.eclipse.synchronizationTasks(generateTemplates)

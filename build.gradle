@@ -1,0 +1,60 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.140' apply false
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.8' apply false
+    id 'xyz.jpenilla.run-velocity' version '2.3.1' apply false
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'idea'
+
+    base {
+        archivesName = "${rootProject.project_base_name}-${project.name}"
+    }
+
+    version = rootProject.project_version
+    group = rootProject.project_group
+
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release.set(21)
+    }
+
+    repositories {
+        mavenCentral()
+
+        maven {
+            name = 'PaperMC'
+            url = 'https://repo.papermc.io/repository/maven-public/'
+        }
+    }
+
+    dependencies {
+
+    }
+
+    publishing {
+        repositories {
+            mavenLocal()
+        }
+    }
+
+    idea {
+        module {
+            downloadSources = true
+            downloadJavadoc = true
+        }
+    }
+}
