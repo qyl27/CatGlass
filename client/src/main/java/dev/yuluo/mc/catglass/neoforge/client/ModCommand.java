@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.network.chat.Component;
@@ -12,6 +14,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.server.command.EnumArgument;
+
+import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
@@ -33,17 +37,28 @@ public class ModCommand {
                             .executes(ModCommand::onListCookies))
                     .then(literal("get")
                             .then(argument(KEY, IdentifierArgument.id())
+                                    .suggests(ModCommand::onSuggestKey)
                                     .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
                                             .executes(ModCommand::onGetCookie))))
                     .then(literal("set")
                             .then(argument(KEY, IdentifierArgument.id())
+                                    .suggests(ModCommand::onSuggestKey)
                                     .then(argument(FORMAT, EnumArgument.enumArgument(SerializationFormat.class))
                                             .then(argument(VALUE, StringArgumentType.greedyString())
                                                     .executes(ModCommand::onSetCookie))
                                     )))
                     .then(literal("unset")
                             .then(argument(KEY, IdentifierArgument.id())
+                                    .suggests(ModCommand::onSuggestKey)
                                     .executes(ModCommand::onUnsetCookie))));
+
+    private static CompletableFuture<Suggestions> onSuggestKey(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+        var result = ClientCookieHelper.listCookies();
+        for (var cookie : result) {
+            builder.suggest(cookie.toString());
+        }
+        return builder.buildFuture();
+    }
 
     private static int onListCookies(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
