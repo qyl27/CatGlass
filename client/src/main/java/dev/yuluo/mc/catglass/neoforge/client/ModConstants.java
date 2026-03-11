@@ -8,6 +8,7 @@ public class ModConstants {
         public static final String KEY_NOT_FOUND = "text.catglassc.key_not_found";
         public static final String COOKIE_VALUE = "text.catglassc.cookie_value";
         public static final String COOKIE_SET = "text.catglassc.cookie_set";
+        public static final String VALUE_FORMAT_INVALID = "text.catglassc.value_format_invalid";
         public static final String COOKIE_UNSET = "text.catglassc.cookie_unset";
     }
 }

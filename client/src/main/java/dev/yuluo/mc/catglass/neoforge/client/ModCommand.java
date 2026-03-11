@@ -55,7 +55,7 @@ public class ModCommand {
         return result.size();
     }
 
-    private static int onGetCookie(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int onGetCookie(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         var key = IdentifierArgument.getId(context, KEY);
         var format = context.getArgument(FORMAT, SerializationFormat.class);
@@ -74,10 +74,15 @@ public class ModCommand {
         var key = IdentifierArgument.getId(context, KEY);
         var format = context.getArgument(FORMAT, SerializationFormat.class);
         var value = StringArgumentType.getString(context, VALUE);
-        var formatted = format.serialize(value);
-        ClientCookieHelper.setCookie(key, formatted);
-        source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_SET, key.toString(), format.toString(), value), true);
-        return Command.SINGLE_SUCCESS;
+        try {
+            var formatted = format.serialize(value);
+            ClientCookieHelper.setCookie(key, formatted);
+            source.sendSuccess(() -> Component.translatable(ModConstants.Translation.COOKIE_SET, key.toString(), format.toString(), value), true);
+            return Command.SINGLE_SUCCESS;
+        } catch (IllegalArgumentException ex) {
+            source.sendFailure(Component.translatable(ModConstants.Translation.VALUE_FORMAT_INVALID, format.toString(), value));
+            return 0;
+        }
     }
 
     private static int onUnsetCookie(CommandContext<CommandSourceStack> context) {

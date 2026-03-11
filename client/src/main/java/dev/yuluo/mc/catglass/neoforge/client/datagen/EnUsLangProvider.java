@@ -14,8 +14,9 @@ public class EnUsLangProvider extends LanguageProvider {
         add(ModConstants.Translation.TOTAL_N_COOKIES, "Total %1$s cookies");
         add(ModConstants.Translation.COOKIE_N, "%1$s: %2$s");
         add(ModConstants.Translation.KEY_NOT_FOUND, "Key %1$s not found");
-        add(ModConstants.Translation.COOKIE_VALUE, "Cookie %1$s(%2$s): %3$s");
-        add(ModConstants.Translation.COOKIE_SET, "Cookie %1$s was set to %2$s: %3$s");
+        add(ModConstants.Translation.COOKIE_VALUE, "Cookie %1$s (%2$s): %3$s");
+        add(ModConstants.Translation.COOKIE_SET, "Cookie %1$s was set to %3$s (%2$s)");
+        add(ModConstants.Translation.VALUE_FORMAT_INVALID, "Value %2$s is invalid for format %1$s");
         add(ModConstants.Translation.COOKIE_UNSET, "Cookie %1$s was unset");
     }
 }

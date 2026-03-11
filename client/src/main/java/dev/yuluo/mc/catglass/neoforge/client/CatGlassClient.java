@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 @Mod(value = CatGlassClient.MODID, dist = Dist.CLIENT)
 public class CatGlassClient {
     public static final String MODID = "catglassc";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public CatGlassClient(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
