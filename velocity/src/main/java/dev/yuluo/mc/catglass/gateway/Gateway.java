@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 @Plugin(
     id = "catglass",
     name = "CatGlass",
-    version = BuildConstants.VERSION
-    ,authors = {"qyl27"}
+    version = BuildConstants.VERSION,
+    authors = {"qyl27"}
 )
 public class Gateway {
 
